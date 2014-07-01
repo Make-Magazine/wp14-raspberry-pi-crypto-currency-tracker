@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+import time
+from api import *
+
+running = True
+sleep_delay = 5
+currency = 'USD'
+use_apis = ['CoinDesk','BlockChain']
+
+
+apis = []
+
+
+# create list of all apis in api/ folder
+for api in btcapipuller.BtcApiPuller.__subclasses__():
+	print(api)
+	if api.get_name(api) in use_apis:
+		apis.append( api() )
+
+# if we found the api we want to use
+if len(apis) > 0:
+
+	# and still running
+	while(running):
+
+		# try to pull price of 1 BTC from chosen api
+		try:
+			for api in apis:
+				print("1 BTC = " + str(api.get_price(currency))
+								 + " " + currency
+								 + " [From " + api.get_name()+"]")
+			time.sleep(sleep_delay)
+
+		# quit script if CTRL+C pressed
+		except KeyboardInterrupt:
+			print("Quitting...")
+			running = False
