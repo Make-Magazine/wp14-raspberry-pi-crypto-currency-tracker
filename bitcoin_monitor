@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import time
 from api import *
 
@@ -14,7 +14,7 @@ apis = []
 # create list of all apis in api/ folder
 for api in btcapipuller.BtcApiPuller.__subclasses__():
 	print(api)
-	if api.get_name(api) in use_apis:
+	if api.get_name( api() ) in use_apis:
 		apis.append( api() )
 
 # if we found the api we want to use
