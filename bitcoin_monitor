@@ -18,8 +18,10 @@ try:
 	lcd = Adafruit_CharLCD()
 	lcd.begin(16,1)
 	use_lcd = True
+	print("Using 16x2 character lcd for output")
 except:
 	use_lcd = False
+	print("Not using 16x2 character lcd for output")
 
 # create list of all apis in api/ folder
 for api in cryptocurrencyapipuller.CryptocurrencyApiPuller.__subclasses__():
