@@ -3,19 +3,25 @@ import time
 import sys
 from api import *
 
-
 sys.path.insert(0, './extern/adafruit/Adafruit_CharLCD')
 from Adafruit_CharLCD import Adafruit_CharLCD
 
-
-running = True
+# configuration
 sleep_delay = 5
 currency = 'USD'
 use_apis = ['CoinDesk','BlockChain']
+raspberry_pi_model_b = True
+
+# don't modify these globals
+running = True
 apis = []
 
+# attempt to load Adafruit_CharLCD. If it fails, ignore it.
 try:
-	lcd = Adafruit_CharLCD()
+	if raspberry_pi_model_b == True:
+		lcd = Adafruit_CharLCD(pins_db=[23, 17, 27, 22])
+	else:
+		lcd = Adafruit_CharLCD()
 	lcd.begin(16,1)
 	use_lcd = True
 	print("Using 16x2 character lcd for output")
@@ -50,3 +56,4 @@ if len(apis) > 0:
 		except KeyboardInterrupt:
 			print("Quitting...")
 			running = False
+			lcd.finish()
