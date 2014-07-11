@@ -1,0 +1,3 @@
+[submodule "extern/adafruit"]
+	path = extern/adafruit
+	url = https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git

@@ -1,18 +1,28 @@
 #!/usr/bin/python
 import time
+import sys
 from api import *
+
+
+sys.path.insert(0, './extern/adafruit/Adafruit_CharLCD')
+from Adafruit_CharLCD import Adafruit_CharLCD
+
 
 running = True
 sleep_delay = 5
 currency = 'USD'
 use_apis = ['CoinDesk','BlockChain']
-
-
 apis = []
 
+try:
+	lcd = Adafruit_CharLCD()
+	lcd.begin(16,1)
+	use_lcd = True
+except:
+	use_lcd = False
 
 # create list of all apis in api/ folder
-for api in btcapipuller.BtcApiPuller.__subclasses__():
+for api in cryptocurrencyapipuller.CryptocurrencyApiPuller.__subclasses__():
 	print(api)
 	if api.get_name( api() ) in use_apis:
 		apis.append( api() )
@@ -25,10 +35,13 @@ if len(apis) > 0:
 
 		# try to pull price of 1 BTC from chosen api
 		try:
+			if use_lcd:
+				lcd.clear()
 			for api in apis:
-				print("1 BTC = " + str(api.get_price(currency))
-								 + " " + currency
-								 + " [From " + api.get_name()+"]")
+				message = "1" + api.get_type() + ": "+"{0:.2f}".format(float(api.get_price(currency)))+currency
+				if use_lcd:
+					lcd.message(message+"\n")
+				print(message)
 			time.sleep(sleep_delay)
 
 		# quit script if CTRL+C pressed
