@@ -18,4 +18,7 @@ class API_BlockChain(cryptocurrencyapipuller.CryptocurrencyApiPuller):
 		data = json.loads(response.read().decode('utf-8'))
 
 		if country in data:
-			return data[country]['15m']
+			currentprice = data[country]['15m']
+			if currentprice != self.last_price:
+				self.last_price = currentprice
+			return currentprice

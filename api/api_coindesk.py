@@ -18,4 +18,7 @@ class API_CoinDesk(cryptocurrencyapipuller.CryptocurrencyApiPuller):
 		data = json.loads(response.read().decode('utf-8'))
 
 		if "bpi" in data:
-			return data["bpi"][country]["rate"]
+			currentprice = data["bpi"][country]["rate"]
+			if currentprice != self.last_price:
+				self.last_price = currentprice
+			return currentprice
