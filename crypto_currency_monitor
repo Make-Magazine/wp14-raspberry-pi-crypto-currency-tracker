@@ -1,0 +1,99 @@
+#!/usr/bin/python
+import time
+import threading
+import math
+import sys
+from api import *
+
+sys.path.insert(0, './extern/adafruit/Adafruit_CharLCD')
+from Adafruit_CharLCD import Adafruit_CharLCD
+
+# configuration
+sleep_delay = 5
+sleep_delta = 0
+currency = 'USD'
+use_apis = ['CoinDesk','BlockChain']
+raspberry_pi_model_b = True
+
+# don't modify these globals
+running = True
+apis = []
+message = ""
+#message_lock = threading.Lock()
+
+def poll_apis():
+	global running
+	global message
+	global message_lock
+	global apis
+	while(running):
+		#message_lock.acquire()		
+		for api in apis:
+			message = "{0}: {1:.2f} {2}\n     {3:.2f} {2}".format(api.get_type(),
+																float(api.get_price(currency)),
+																currency, 
+																float(api.get_last_price()))
+			time.sleep(10)
+		#message_lock.release()
+		#time.sleep(sleep_delay)
+
+
+# attempt to load Adafruit_CharLCD. If it fails, ignore it.
+try:
+	if raspberry_pi_model_b == True:
+		lcd = Adafruit_CharLCD(pins_db=[23, 17, 27, 22])
+	else:
+		lcd = Adafruit_CharLCD()
+	lcd.begin(16,1)
+	use_lcd = True
+	print("Using 16x2 character lcd for output")
+except:
+	use_lcd = False
+	print("Not using 16x2 character lcd for output")
+
+# create list of all apis in api/ folder
+for api in cryptocurrencyapipuller.CryptocurrencyApiPuller.__subclasses__():
+	print(api)
+	if api.get_name( api() ) in use_apis:
+		apis.append( api() )
+
+# if we found the api we want to use
+if len(apis) > 0:
+
+	t = threading.Thread(target=poll_apis)
+	t.start()
+	
+
+	try:
+		if use_lcd:
+			lcd.clear()
+
+		# and still running
+		while(running):
+
+			# try to pull price of 1 BTC from chosen api
+			time.sleep(sleep_delay)
+			#sleep_delta = sleep_delta + 0.25
+			#if sleep_delta == sleep_delay:
+				#sleep_delta = 0.0
+			#message_lock.acquire()
+				# message = message[1:]
+			print(message)
+			if use_lcd:
+				lcd.message(message+"\n")
+			#message_lock.release()
+
+
+	# quit script if CTRL+C pressed
+	except KeyboardInterrupt:
+		running = False
+	except:
+		running = False
+		#try:
+		#	message_lock.release()
+		#except threading.ThreadError:
+		# 	pass
+
+print("Quitting...")
+			#if use_lcd:
+			#	lcd.finish()
